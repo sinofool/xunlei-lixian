@@ -10,6 +10,9 @@ import os.path
 import json
 from ast import literal_eval
 
+from socksipyhandler import SocksiPyHandler
+import socks
+
 USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:11.0) Gecko/20100101 Firefox/11.0'
 
 def retry(f_or_arg, *args):
@@ -221,6 +224,7 @@ class XunleiClient(object):
 		self.limit = None
 
 		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookiejar))
+		self.pxyopener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookiejar), SocksiPyHandler(socks.PROXY_TYPE_SOCKS5, '192.168.111.123', 9050))
 		self.verification_code_reader = verification_code_reader
 		self.login_time = None
 		if login:
@@ -245,7 +249,11 @@ class XunleiClient(object):
 #			print line.strip()
 		if 'data' in args and type(args['data']) == dict:
 			args['data'] = urlencode(args['data'])
-		return self.opener.open(urllib2.Request(url, **args), timeout=60)
+		if url.startswith('http://dynamic.cloud.vip.xunlei.com'):
+			return self.pxyopener.open(urllib2.Request(url, **args), timeout=60)
+		else:
+			return self.opener.open(urllib2.Request(url, **args), timeout=60)
+		fi
 
 	def urlread1(self, url, **args):
 		args.setdefault('headers', {})
