@@ -389,8 +389,8 @@ class XunleiClient(object):
 		logger.debug('login')
 		self.check_device_id()
 		cachetime = current_timestamp()
-		check_url = 'http://login.xunlei.com/check/?u=%s&business_type=108&v=101&cachetime=%d&' % (username, cachetime)
-		login_page = self.urlopen(check_url).read()
+		#check_url = 'http://login.xunlei.com/check/?u=%s&business_type=108&v=101&cachetime=%d&' % (username, cachetime)
+		#login_page = self.urlopen(check_url).read()
 		verification_code = self.get_cookie('.xunlei.com', 'check_result')[2:].upper()
 		if not verification_code:
 			verification_code = self.read_verification_code()
